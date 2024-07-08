@@ -1,5 +1,17 @@
 DWMH NEW READ ME FILE
 Plan Outline
+## MySql
+- Reservation Mapper joing location and user
+  - For reading
+    - .query
+  - For adding
+    - .insert
+  - For updating
+    - .update
+  - For Deleting
+    - .update
+- Location Mapper joins user
+- User Mapper
 ## Display Controller 
 - Result Class
   - If success {success message}
