@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationRepository {
-    private final JdbcTemplate jdbcTemplate;
 
+    private final JdbcTemplate jdbcTemplate;
 
     public ReservationRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
