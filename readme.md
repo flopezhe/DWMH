@@ -101,13 +101,13 @@ Plan Outline
 # Tasks and Time
 
 1. [ ] ## Project SetUp 
-2. [ ] - Set Up MySql **Done**
-3. [ ]   - execute databases 
+2. [ x] - Set Up MySql **Done**
+3. [ x]   - execute databases 
 4. [ ]   - set known good state
-5. [ ] - Set Up Java Maven **20 min**
-6. [ ]   - Add dependencies
-7. [ ]   - Add junit
-8. [ ]   - Create Packages and Classes based on outline 
+5. [x ] - Set Up Java Maven **20 min**
+6. [x ]   - Add dependencies
+7. [x ]   - Add junit
+8. [x ]   - Create Packages and Classes based on outline 
 9. [ ] ## Data Layer 
 10. [ ]   - Create outlined mappers **30 MIN**
 11. [ ]     - Location

@@ -1,18 +1,30 @@
 package learn.dwmh.models;
 
 public class User {
+
+    private int userId;
     private String lastName;
     private int phoneNum;
     private String email;
     private Location location;
     private String firstName;
 
-    public User(String lastName, int phoneNum, String email, Location location, String firstName) {
+    public User(){}
+
+    public User(int userId, String lastName, int phoneNum, String email, Location location, String firstName) {
+        this.userId = userId;
         this.lastName = lastName;
         this.phoneNum = phoneNum;
         this.email = email;
         this.location = location;
         this.firstName = firstName;
+    }
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {

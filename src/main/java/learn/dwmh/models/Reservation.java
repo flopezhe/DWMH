@@ -14,6 +14,8 @@ public class Reservation {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    public Reservation(){}
+
     public Reservation(int reservationId, BigDecimal totalAmount, User user, Location location, LocalDate startDate, LocalDate endDate){
         this.reservationId = reservationId;
         this.totalAmount = totalAmount;
