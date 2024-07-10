@@ -15,8 +15,18 @@ public class ReservationRepository {
     }
 
     public Reservation findById(int reservationId){
-        Reservation reservation = new Reservation();
-        return reservation;
+        final String sql = """
+                select r.reservation_id,r.start_date,r.end_date,r.total,
+                l.location_id, l.address,l.city,l.postal_code,l.state_id,l.standard_rate,
+                l.weekend_rate,u.user_id, u.first_name,u.last_name,u.email,u.phone
+                from reservation r
+                inner join location l on r.location_id = l.location_id
+                inner join user u on r.guest_user_id = u.user_id
+                where r.reservation_id = ?;
+                """;
+
+        return jdbcTemplate.query(sql, new ReservationMapper(), reservationId)
+                .stream().findFirst().orElse(null);
     }
 
     public List<Reservation> findByUserId(int userId){
@@ -28,6 +38,8 @@ public class ReservationRepository {
         List<Reservation> reservations = new ArrayList<>();
         return reservations;
     }
+
+
 
 
 }

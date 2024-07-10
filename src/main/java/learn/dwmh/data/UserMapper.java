@@ -21,6 +21,7 @@ public class UserMapper implements RowMapper<User> {
         Location location = new Location();
         location.setLocationId(rs.getInt("location_id"));
         location.setStandardRate(rs.getBigDecimal("standard_rate"));
+        location.setWeekendRate(rs.getBigDecimal("weekend_rate"));
         location.setAddress(rs.getString("address"));
         location.setCity(rs.getString("city"));
         location.setState(rs.getInt("state_id"));

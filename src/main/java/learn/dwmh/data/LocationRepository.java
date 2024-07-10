@@ -17,7 +17,7 @@ public class LocationRepository {
 
         final String sql = """
                 select location_id, address, city,postal_code,
-                state_id,standard_rate, weekend_Rate
+                state_id,standard_rate, weekend_rate
                 from location
                 where location_id = ?;""";
 

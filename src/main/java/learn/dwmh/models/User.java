@@ -1,5 +1,7 @@
 package learn.dwmh.models;
 
+import java.util.Objects;
+
 public class User {
 
     private int userId;
@@ -11,7 +13,7 @@ public class User {
 
     public User(){}
 
-    public User(int userId, String lastName, int phoneNum, String email, Location location, String firstName) {
+    public User(int userId, String firstName, String lastName, String email, int phoneNum, Location location) {
         this.userId = userId;
         this.lastName = lastName;
         this.phoneNum = phoneNum;
@@ -67,5 +69,30 @@ public class User {
         this.location = location;
     }
 
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (userId != user.userId) return false;
+        if (!Objects.equals(lastName, user.lastName)) return false;
+        if (!Objects.equals(phoneNum, user.phoneNum)) return false;
+        if (!Objects.equals(email, user.email)) return false;
+        if (!Objects.equals(location, user.location)) return false;
+        return Objects.equals(firstName, user.firstName);
+    }
+
+
+    @Override
+    public int hashCode() {
+        int result = userId;
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + phoneNum;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+        return result;
+    }
 
 }
