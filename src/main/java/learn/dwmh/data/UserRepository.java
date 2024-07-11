@@ -62,6 +62,8 @@ public class UserRepository {
 
         return jdbcTemplate.query(sql, new UserMapper());
     }
+
+    // read by email
     public User findByEmail(String email) {
         String sql = """
            select

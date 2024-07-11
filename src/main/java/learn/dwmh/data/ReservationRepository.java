@@ -49,6 +49,8 @@ public class ReservationRepository {
                 .stream().findFirst().orElse(null);
     }
 
+    //I may be able to use this to find reservations by location/host location
+
     public List<Reservation> findAllByLocationId(int locationId) {
         String sql = """
                     select
@@ -76,10 +78,6 @@ public class ReservationRepository {
         return jdbcTemplate.query(sql, new ReservationMapper(), locationId);
     }
 
-    public List<LocalDate> findAvailableDates(int locationId) {
-
-        return List.of(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2), LocalDate.now().plusDays(3));
-    }
 
 
     public Reservation add(Reservation reservation) {

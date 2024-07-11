@@ -15,16 +15,16 @@ public class App {
 
     public static void main(String[] args) {
 
-        JdbcTemplate jdbcTemplate = DataHelper.getJdbcTemplate();
-
-
-        ReservationRepository reservationRepository = new ReservationRepository(jdbcTemplate);
-
-        ReservationService reservationService = new ReservationService(reservationRepository);
-
-
-        Controller controller = new Controller(reservationService);
-        controller.run();
+//        JdbcTemplate jdbcTemplate = DataHelper.getJdbcTemplate();
+//
+//
+//        ReservationRepository reservationRepository = new ReservationRepository(jdbcTemplate);
+//
+//        ReservationService reservationService = new ReservationService(reservationRepository);
+//
+//
+//        Controller controller = new Controller(reservationService);
+//        controller.run();
 
 
 

@@ -107,6 +107,10 @@ public class ReservationService {
             }
         }
 
+        if (reservation.getTotalAmount() == null || reservation.getTotalAmount().compareTo(BigDecimal.ZERO) < 0) {
+            result.addMessage("Total amount must be specified and cannot be negative.");
+        }
+
         if (reservation.getLocation() == null) {
             result.addMessage("Host location is required.");
         } else {
@@ -140,5 +144,20 @@ public class ReservationService {
         result.setSuccess(result.getMessages().isEmpty());
         return result;
     }
+
+    private Result<Reservation> validateCancellation(Reservation reservation){
+        Result<Reservation> result = new Result<>();
+
+        if(reservation == null){
+            result.addMessage("reservation is empty");
+        }
+
+        if(reservation.getStartDate() != null && reservation.getStartDate().isBefore(LocalDate.now())){
+            result.addMessage("This Reservation has passed, please enter a reservation in the future");
+        }
+
+        return result;
+    }
+
 }
 

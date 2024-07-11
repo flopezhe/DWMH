@@ -1,10 +1,9 @@
 package learn.dwmh.ui;
 
-import learn.dwmh.data.ReservationRepository;
+
 import learn.dwmh.domain.ReservationService;
-import learn.dwmh.models.Location;
+
 import learn.dwmh.models.Reservation;
-import learn.dwmh.models.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,8 +22,8 @@ public class View {
     }
 
     public void displayMenu() {
-        boolean running = true;
-        while (running) {
+        boolean run = true;
+        while (run) {
             System.out.println("\n===== Reservation Management System =====");
             System.out.println("1. View Reservations for Host Location");
             System.out.println("2. Make a Reservation");
@@ -49,7 +48,7 @@ public class View {
                     cancelReservation();
                     break;
                 case 5:
-                    running = false;
+                    run = false;
                     System.out.println("Goodbye!");
                     break;
                 default:
@@ -60,34 +59,36 @@ public class View {
     }
 
     private void viewReservations() {
-
+        // read by email or several hosts
     }
 
     private void makeReservation() {
-
+        // create
     }
 
     private void editReservation() {
-
+        // update options only date changes can be made and recalculate total maybe use below code
     }
 
     private void cancelReservation() {
-
+        // cancel only future reservation displayMessage
     }
 
     public void displayReservationDetails(Reservation reservation) {
-
+        //displays details at the end, I believe I can use this for any output
     }
 
     public void displayAvailableDates(List<LocalDate> availableDates) {
-
+        // display dates host is available for
     }
 
     public void displaySummary(BigDecimal totalAmount) {
+        // displays amount guest will be paying or due
         System.out.printf("Total Amount: $%.2f%n", totalAmount);
     }
 
     public void displayMessage(String message) {
+        // generic message
         System.out.println(message);
     }
 
