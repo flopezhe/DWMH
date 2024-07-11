@@ -1,20 +1,29 @@
 package learn.dwmh.ui;
 
+import learn.dwmh.data.ReservationRepository;
+import learn.dwmh.domain.ReservationService;
+import learn.dwmh.models.Location;
 import learn.dwmh.models.Reservation;
+import learn.dwmh.models.User;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
 public class View {
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private static final Scanner scanner = new Scanner(System.in);
 
-    private final TextIO io;
+    private final ReservationService reservationService;
 
-    public View(TextIO io){
-        this.io=io;
+    public View(ReservationService reservationService) {
+        this.reservationService = reservationService;
     }
-    public static void displayMenu() {
+
+    public void displayMenu() {
         boolean running = true;
-        Scanner scanner = new Scanner(System.in);
         while (running) {
             System.out.println("\n===== Reservation Management System =====");
             System.out.println("1. View Reservations for Host Location");
@@ -28,20 +37,20 @@ public class View {
 
             switch (choice) {
                 case 1:
-                    System.out.println("1");
+                    viewReservations();
                     break;
                 case 2:
-                    System.out.println("2");
+                    makeReservation();
                     break;
                 case 3:
-                    System.out.println("3");
+                    editReservation();
                     break;
                 case 4:
-                    System.out.println("4");
+                    cancelReservation();
                     break;
                 case 5:
                     running = false;
-                    System.out.println("Exiting the application...");
+                    System.out.println("Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 5.");
@@ -50,18 +59,36 @@ public class View {
         }
     }
 
-    public void displayReservations(List<Reservation> reservations){
-        if(reservations.size()==0){
-            displayHeader("No Reservations Found.");
-        }
+    private void viewReservations() {
+
     }
 
-    public void displayHeader(String message){
-        int length = message.length();
-        io.println("");
-        io.println(message);
-        io.println("=".repeat(length));
+    private void makeReservation() {
 
+    }
+
+    private void editReservation() {
+
+    }
+
+    private void cancelReservation() {
+
+    }
+
+    public void displayReservationDetails(Reservation reservation) {
+
+    }
+
+    public void displayAvailableDates(List<LocalDate> availableDates) {
+
+    }
+
+    public void displaySummary(BigDecimal totalAmount) {
+        System.out.printf("Total Amount: $%.2f%n", totalAmount);
+    }
+
+    public void displayMessage(String message) {
+        System.out.println(message);
     }
 
 }

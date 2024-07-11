@@ -1,112 +1,144 @@
 package learn.dwmh.domain;
 
 import learn.dwmh.data.ReservationRepository;
+import learn.dwmh.data.UserRepository;
 import learn.dwmh.models.Location;
 import learn.dwmh.models.Reservation;
 import learn.dwmh.models.User;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
 
-    public ReservationService(ReservationRepository reservationRepository) {
+    private final UserRepository userRepository;
+
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, UserRepository userRepository1) {
         this.reservationRepository = reservationRepository;
+        this.userRepository = userRepository1;
     }
 
-    public List<String> validateReservation(Reservation reservation) {
-        return Validate.validateReservation(reservation);
-    }
+    public List<Reservation> findByLocation(int locationId){
+        return reservationRepository.findAllByLocationId(locationId);
+    };
 
-    public void viewReservationsForHost(Location location) {
-        List<Reservation> reservations = reservationRepository.findAllByLocationId(location.getLocationId());
-        Result.viewReservationsForHost(location, reservations);
-    }
+    public Result<Reservation> add(Reservation reservation) {
+        Result<Reservation> result = validateReservation(reservation);
+        if(!result.isSuccess()){
+            return result;
+        }
 
-    public int makeReservation(User guestUser, Location hostLocation, LocalDate startDate, LocalDate endDate) {
-        List<LocalDate> availableDates = reservationRepository.findAvailableDates(hostLocation.getLocationId());
-        Result.displayAvailableDates(availableDates);
+        BigDecimal totalAmount = calculateTotalAmount(reservation.getLocation(), reservation.getStartDate(), reservation.getEndDate());
 
-        BigDecimal totalAmount = calculateTotalAmount(hostLocation, startDate, endDate);
-        Result.displaySummary(totalAmount);
-
-
-        Reservation reservation = new Reservation();
-        reservation.setLocation(hostLocation);
-        reservation.setGuestUserId(guestUser);
-        reservation.setStartDate(startDate);
-        reservation.setEndDate(endDate);
         reservation.setTotalAmount(totalAmount);
 
-        int reservationId = reservationRepository.createReservation(reservation);
-        if (reservationId > 0) {
-            Result.displayMessage("Reservation successfully created. Reservation ID: " + reservationId);
-        } else {
-            Result.displayMessage("Failed to create reservation.");
-        }
-        return reservationId;
+        Reservation addedReservation = reservationRepository.add(reservation);
+        result.setPayload(addedReservation);
+        result.setSuccess(true);
+        return result;
     }
 
-    public void editReservation(int reservationId, LocalDate newStartDate, LocalDate newEndDate) {
-        Reservation reservation = reservationRepository.findById(reservationId);
-
-        if (reservation == null) {
-            Result.displayMessage("Reservation not found.");
-            return;
+    public Result<Reservation> updateReservation(Reservation reservation) {
+        Result<Reservation> result = validateReservation(reservation);
+        if(!result.isSuccess()){
+            return result;
         }
 
+        BigDecimal totalAmount = calculateTotalAmount(reservation.getLocation(), reservation.getStartDate(), reservation.getEndDate());
 
-        reservation.setStartDate(newStartDate);
-        reservation.setEndDate(newEndDate);
+        reservation.setTotalAmount(totalAmount);
 
-        BigDecimal totalAmount = calculateTotalAmount(reservation.getLocation(), newStartDate, newEndDate);
-        Result.displaySummary(totalAmount);
-
-        int rowsAffected = reservationRepository.updateReservation(reservation);
-        if (rowsAffected > 0) {
-            Result.displayMessage("Reservation successfully updated.");
+        int updateCount = reservationRepository.updateReservation(reservation);
+        if(updateCount == 1){
+            result.setSuccess(true);
+            result.setPayload(reservation);
         } else {
-            Result.displayMessage("Failed to update reservation.");
+            result.setSuccess(false);
+            result.addMessage("Update Failed");
         }
+
+        return result;
     }
 
-    public void cancelReservation(int reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId);
+    public Result<Void> deleteReservation(int reservationId) {
+        Result<Void> result = new Result<>();
 
-        if (reservation == null) {
-            Result.displayMessage("Reservation not found.");
-            return;
-        }
-
-        if (reservation.getEndDate().isBefore(LocalDate.now())) {
-            Result.displayMessage("Cannot cancel past reservations.");
-            return;
-        }
-
-        int rowsAffected = reservationRepository.deleteReservation(reservationId);
-        if (rowsAffected > 0) {
-            Result.displayMessage("Reservation successfully canceled.");
+        int deleteCt = reservationRepository.deleteReservation(reservationId);
+        if(deleteCt == 1){
+            result.setSuccess(true);
         } else {
-            Result.displayMessage("Failed to cancel reservation.");
+            result.setSuccess(false);
+            result.addMessage("Delete Failed");
         }
+        return result;
     }
 
     private BigDecimal calculateTotalAmount(Location hostLocation, LocalDate startDate, LocalDate endDate) {
-
         BigDecimal totalAmount = BigDecimal.ZERO;
-        LocalDate date = startDate;
-        while (!date.isAfter(endDate)) {
-            if (date.getDayOfWeek().getValue() >= 6) {
-                totalAmount = totalAmount.add(hostLocation.getWeekendRate());
+        BigDecimal standardRate = hostLocation.getStandardRate();
+        BigDecimal weekendRate = hostLocation.getWeekendRate();
+
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            DayOfWeek dayOfWeek = date.getDayOfWeek();
+            if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+                totalAmount = totalAmount.add(weekendRate);
             } else {
-                totalAmount = totalAmount.add(hostLocation.getStandardRate());
+                totalAmount = totalAmount.add(standardRate);
             }
-            date = date.plusDays(1);
         }
+
         return totalAmount;
+    }
+
+    private Result<Reservation> validateReservation(Reservation reservation) {
+        Result<Reservation> result = new Result<>();
+
+        if (reservation.getGuestUserId() == null) {
+            result.addMessage("Guest is required.");
+        } else {
+            User guest = userRepository.findById(reservation.getGuestUserId().getUserId());
+            if (guest == null) {
+                result.addMessage("Guest must exist in the database.");
+            }
+        }
+
+        if (reservation.getLocation() == null) {
+            result.addMessage("Host location is required.");
+        } else {
+            Location location = reservation.getLocation();
+            if (location == null) {
+                result.addMessage("Host location must exist in the database.");
+            }
+        }
+
+        if (reservation.getStartDate() == null || reservation.getEndDate() == null) {
+            result.addMessage("Start date and end date are required.");
+        } else {
+            if (!reservation.getStartDate().isBefore(reservation.getEndDate())) {
+                result.addMessage("Start date must come before end date.");
+            }
+
+            if (!reservation.getStartDate().isAfter(LocalDate.now())) {
+                result.addMessage("Start date must be in the future.");
+            }
+
+            List<Reservation> existingReservations = reservationRepository.findAllByLocationId(reservation.getLocation().getLocationId());
+            for (Reservation existingReservation : existingReservations) {
+                if (reservation.getStartDate().isBefore(existingReservation.getEndDate()) &&
+                        reservation.getEndDate().isAfter(existingReservation.getStartDate())) {
+                    result.addMessage("The reservation dates overlap with an existing reservation.");
+                    break;
+                }
+            }
+        }
+
+        result.setSuccess(result.getMessages().isEmpty());
+        return result;
     }
 }
 
