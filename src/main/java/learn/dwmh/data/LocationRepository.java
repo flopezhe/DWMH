@@ -16,10 +16,22 @@ public class LocationRepository {
     public Location findById(int locationId) {
 
         final String sql = """
-                select location_id, address, city,postal_code,
-                state_id,standard_rate, weekend_rate
-                from location
-                where location_id = ?;""";
+                select
+                l.location_id,
+                l.address,
+                l.city,
+                l.postal_code,
+                l.standard_rate,
+                l.weekend_rate,
+                u.user_id,u.first_name,u.last_name,u.email,u.phone,
+                s.state_id,
+                s.`name`,
+                s.usps_code
+                from location l
+                inner join `user` u on l.user_id = u.user_id
+                inner join state s on l.state_id = s.state_id
+                where location_id = ?;
+                """;
 
         return jdbcTemplate.query(sql, new LocationMapper(), locationId)
                 .stream().findFirst().orElse(null);

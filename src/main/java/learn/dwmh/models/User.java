@@ -6,14 +6,14 @@ public class User {
 
     private int userId;
     private String lastName;
-    private int phoneNum;
+    private String phoneNum;
     private String email;
     private Location location;
     private String firstName;
 
     public User(){}
 
-    public User(int userId, String firstName, String lastName, String email, int phoneNum, Location location) {
+    public User(int userId, String firstName, String lastName, String email, String phoneNum, Location location) {
         this.userId = userId;
         this.lastName = lastName;
         this.phoneNum = phoneNum;
@@ -21,6 +21,7 @@ public class User {
         this.location = location;
         this.firstName = firstName;
     }
+
     public int getUserId() {
         return userId;
     }
@@ -45,11 +46,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public int getPhoneNum() {
+    public String getPhoneNum() {
         return phoneNum;
     }
 
-    public void setPhoneNum(int phoneNum) {
+    public void setPhoneNum(String phoneNum) {
         this.phoneNum = phoneNum;
     }
 
@@ -69,30 +70,31 @@ public class User {
         this.location = location;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         User user = (User) o;
-
-        if (userId != user.userId) return false;
-        if (!Objects.equals(lastName, user.lastName)) return false;
-        if (!Objects.equals(phoneNum, user.phoneNum)) return false;
-        if (!Objects.equals(email, user.email)) return false;
-        if (!Objects.equals(location, user.location)) return false;
-        return Objects.equals(firstName, user.firstName);
+        return userId == user.userId && Objects.equals(firstName, user.firstName) &&
+                Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) &&
+                Objects.equals(phoneNum, user.phoneNum) && Objects.equals(location, user.location);
     }
-
 
     @Override
     public int hashCode() {
-        int result = userId;
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        result = 31 * result + phoneNum;
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (location != null ? location.hashCode() : 0);
-        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
-        return result;
+        return Objects.hash(userId, firstName, lastName, email, phoneNum, location);
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNum='" + phoneNum + '\'' +
+                ", location=" + location +
+                '}';
+    }
 }
+

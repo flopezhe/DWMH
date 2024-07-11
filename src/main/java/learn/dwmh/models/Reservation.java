@@ -1,6 +1,5 @@
 package learn.dwmh.models;
 
-import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,9 +14,10 @@ public class Reservation {
     private LocalDate startDate;
     private LocalDate endDate;
 
+
     public Reservation(){}
 
-    public Reservation(int reservationId, User guestUserId, Location location, LocalDate startDate, LocalDate endDate, BigDecimal totalAmount){
+    public Reservation(int reservationId, Location location, User guestUserId, LocalDate startDate, LocalDate endDate, BigDecimal totalAmount){
         this.reservationId = reservationId;
         this.totalAmount = totalAmount;
         this.guestUserId = guestUserId;
@@ -59,29 +59,29 @@ public class Reservation {
         this.totalAmount = totalAmount;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        Reservation reservation = (Reservation) o;
-
-        if (reservationId != reservation.reservationId) return false;
-        if (!Objects.equals(totalAmount, reservation.totalAmount)) return false;
-        if (!Objects.equals(guestUserId, reservation.guestUserId)) return false;
-        if (!Objects.equals(location, reservation.location)) return false;
-        if (!Objects.equals(startDate, reservation.startDate)) return false;
-        return Objects.equals(endDate, reservation.endDate);
+        Reservation that = (Reservation) o;
+        return reservationId == that.reservationId && Objects.equals(totalAmount, that.totalAmount) && Objects.equals(guestUserId, that.guestUserId) && Objects.equals(location, that.location) && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate);
     }
 
     @Override
     public int hashCode() {
-        int result = reservationId;
-        result = 31 * result + (totalAmount != null ? totalAmount.hashCode() : 0);
-        result = 31 * result + (guestUserId != null ? guestUserId.hashCode() : 0);
-        result = 31 * result + (location != null ? location.hashCode() : 0);
-        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
-        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
-        return result;
+        return Objects.hash(reservationId, totalAmount, guestUserId, location, startDate, endDate);
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "reservationId=" + reservationId +
+                ", totalAmount=" + totalAmount +
+                ", guestUserId=" + guestUserId +
+                ", location=" + location +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                '}';
     }
 
 }

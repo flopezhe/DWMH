@@ -100,20 +100,20 @@ Plan Outline
 
 # Tasks and Time
 
-1. [ ] ## Project SetUp 
+1. [x ] ## Project SetUp 
 2. [ x] - Set Up MySql **Done**
 3. [ x]   - execute databases 
-4. [ ]   - set known good state
+4. [ x]   - set known good state
 5. [x ] - Set Up Java Maven **20 min**
 6. [x ]   - Add dependencies
 7. [x ]   - Add junit
 8. [x ]   - Create Packages and Classes based on outline 
 9. [ ] ## Data Layer 
-10. [ ]   - Create outlined mappers **30 MIN**
-11. [ ]     - Location
-12. [ ]     - Reservation
-13. [ ]     - User
-14. [ ]   - table repos interface **30 MIN**
+10. [x ]   - Create outlined mappers **30 MIN**
+11. [ x]     - Location
+12. [x ]     - Reservation
+13. [x ]     - User
+14. [ x]   - table repos interface **30 MIN**
 15. [ ]   - jdbcrepo classes **1 HR**
 16. [ ]     - CRUD
 17. [ ]   - JUNIT TEST

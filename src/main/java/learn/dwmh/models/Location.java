@@ -13,16 +13,27 @@ public class Location {
     private String address;
     private int state;
     private String city;
-    private String zipCode ;
+    private String zipCode;
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    private int userId ;
 
     public Location(){}
 
-    public Location(int locationId, String address, String city, String zipCode,int state,BigDecimal standardRate, BigDecimal weekendRate) {
+    public Location(int locationId, int userId, String address, String city, String zipCode,int stateId,BigDecimal standardRate, BigDecimal weekendRate) {
         this.locationId = locationId;
+        this.userId = userId;
         this.standardRate = standardRate;
         this.weekendRate = weekendRate;
         this.address = address;
-        this.state = state;
+        this.state = stateId;
         this.city = city;
         this.zipCode = zipCode;
     }
@@ -83,31 +94,16 @@ public class Location {
         this.zipCode = zipCode;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Location location = (Location) o;
-
-        if (locationId != location.locationId) return false;
-        if (!Objects.equals(standardRate, location.standardRate)) return false;
-        if (!Objects.equals(weekendRate, location.weekendRate)) return false;
-        if (!Objects.equals(address, location.address)) return false;
-        if (!Objects.equals(state, location.state)) return false;
-        if (!Objects.equals(city, location.city)) return false;
-        return Objects.equals(zipCode, location.zipCode);
+        return locationId == location.locationId && state == location.state && userId == location.userId && Objects.equals(standardRate, location.standardRate) && Objects.equals(weekendRate, location.weekendRate) && Objects.equals(address, location.address) && Objects.equals(city, location.city) && Objects.equals(zipCode, location.zipCode);
     }
-
 
     @Override
     public int hashCode() {
-        int result = locationId;
-        result = 31 * result + (standardRate != null ? standardRate.hashCode() : 0);
-        result = 31 * result + (weekendRate != null ? weekendRate.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + state;
-        result = 31 * result + (city != null ? city.hashCode() : 0);
-        result = 31 * result + (zipCode != null ? zipCode.hashCode() : 0);
-        return result;
+        return Objects.hash(locationId, standardRate, weekendRate, address, state, city, zipCode, userId);
     }
 }
