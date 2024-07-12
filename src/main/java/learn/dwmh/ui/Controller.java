@@ -5,6 +5,7 @@ import learn.dwmh.DataHelper;
 import learn.dwmh.data.ReservationRepository;
 import learn.dwmh.data.UserRepository;
 import learn.dwmh.domain.ReservationService;
+import learn.dwmh.domain.Result;
 import learn.dwmh.domain.UserService;
 import learn.dwmh.models.Location;
 import learn.dwmh.models.Reservation;
@@ -85,7 +86,7 @@ public class Controller {
         }
     }
 
-    private void makeNewReservation(){
+    public void makeNewReservation(){
         String userEmail = view.getGuestEmail();
         User guest = userService.findByEmail(userEmail);
         String hostEmail = view.getHostEmail();
@@ -105,21 +106,57 @@ public class Controller {
         LocalDate startDate = view.getStartDate();
         LocalDate endDate = view.getEndDate();
 
+        view.displayMessage("Please enter reservation id:");
+        int resId = view.reservationIdToEdit();
 
-        reservation.setReservationId(1);
+        reservation.setReservationId(resId);
         reservation.setGuestUserId(guest);
         reservation.setStartDate(startDate);
         reservation.setEndDate(endDate);
         reservation.setLocation(host.getLocation());
-        reservation.setTotalAmount(reservationService.calculateTotalAmount(reservation.getLocation(), reservation.getStartDate(), reservation.getEndDate()));
+        reservation.setTotalAmount(reservationService.calculateTotalAmount(reservation.getLocation(),
+                reservation.getStartDate(), reservation.getEndDate()));
         reservationService.add(reservation);
 
 
 
     }
-    public void editReservation(){}
-    public void cancelReservation(){}
+    public void editReservation(){
+        view.displayMessage("Please enter reservation id:");
+        int resId = view.reservationIdToEdit();
 
+        Reservation reservation = reservationService.findByReservationId(resId);
+
+        LocalDate startDate = view.getStartDate();
+        LocalDate endDate = view.getEndDate();
+        reservation.setStartDate(startDate);
+        reservation.setEndDate(endDate);
+        reservation.setTotalAmount(reservationService.calculateTotalAmount(reservation.getLocation(),
+                reservation.getStartDate(), reservation.getEndDate()));
+        reservationService.updateReservation(reservation);
+    }
+
+
+    public void cancelReservation(){
+        Scanner scanner = new Scanner(System.in);
+        String userEmail = view.getGuestEmail();
+        String hostEmail = view.getHostEmail();
+        viewHost(hostEmail);
+        viewReservationsOfHost(hostEmail);
+        view.displayMessage("Please enter reservation id to delete:");
+        int resId = Integer.parseInt(scanner.nextLine());
+
+        Result<Void> result = reservationService.deleteReservation(resId);
+
+
+        if( result.isSuccess()) {
+            view.displayMessage("Deleted successfully.");
+        } else{
+            System.out.println(result.getMessages());
+        }
+
+
+    }
 
 
 }

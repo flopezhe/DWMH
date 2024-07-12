@@ -73,18 +73,20 @@ public class View {
     }
 
 
-    private void edit() {
-        // update options only date changes can be made and recalculate total maybe use below code
+    public int reservationIdToEdit() {
+        Scanner scanner = new Scanner(System.in);
+        return io.readInt(scanner.nextLine());
+
     }
 
-    private void cancel() {
+    public void cancel() {
         // cancel only future reservation displayMessage
     }
 
     public void displayReservationDetails(List<Reservation> reservations) {
         //displays details at the end, I believe I can use this for any output
         for (Reservation reservation : reservations) {
-            System.out.printf(" Reservation Details:%n Start Date: %s%n End Date: %s%n Total: %s%n", reservation.getStartDate(), reservation.getEndDate(), reservation.getTotalAmount());
+            System.out.printf(" Reservation Details:%n Reservation Id: %s%n Start Date: %s%n End Date: %s%n Total: %s%n", reservation.getReservationId(),reservation.getStartDate(), reservation.getEndDate(), reservation.getTotalAmount());
 
         }
     }

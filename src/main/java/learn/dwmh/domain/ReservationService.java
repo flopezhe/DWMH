@@ -27,6 +27,10 @@ public class ReservationService {
         this.locationRepository = locationRepository;
     }
 
+    public Reservation findByReservationId(int reservationId){
+        return reservationRepository.findById(reservationId);
+    }
+
     public List<Reservation> findAvailability(int locationId){
         return reservationRepository.findAvailability(locationId);
     }
