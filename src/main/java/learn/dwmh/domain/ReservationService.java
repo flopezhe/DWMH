@@ -1,5 +1,6 @@
 package learn.dwmh.domain;
 
+import learn.dwmh.data.LocationRepository;
 import learn.dwmh.data.ReservationRepository;
 import learn.dwmh.data.UserRepository;
 import learn.dwmh.models.Location;
@@ -18,24 +19,35 @@ public class ReservationService {
 
     private final UserRepository userRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, UserRepository userRepository1) {
+    private final LocationRepository locationRepository;
+
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository1, LocationRepository locationRepository) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository1;
+        this.locationRepository = locationRepository;
     }
 
-    public List<Reservation> findByLocation(int locationId){
-        return reservationRepository.findAllByLocationId(locationId);
-    };
+    public List<Reservation> findAvailability(int locationId){
+        return reservationRepository.findAvailability(locationId);
+    }
+
+    public Location findByLocation(String email){
+        return reservationRepository.findByLocationId(email);
+    }
+
+    public List<Reservation> findReservationsByLocation(int locationId){
+        return reservationRepository.findReservationsByLocation(locationId);
+    }
+
 
     public Result<Reservation> add(Reservation reservation) {
+        BigDecimal totalAmount = calculateTotalAmount(reservation.getLocation(), reservation.getStartDate(), reservation.getEndDate());
+        reservation.setTotalAmount(totalAmount);
+
         Result<Reservation> result = validateReservation(reservation);
         if(!result.isSuccess()){
             return result;
         }
-
-        BigDecimal totalAmount = calculateTotalAmount(reservation.getLocation(), reservation.getStartDate(), reservation.getEndDate());
-
-        reservation.setTotalAmount(totalAmount);
 
         Reservation addedReservation = reservationRepository.add(reservation);
         result.setPayload(addedReservation);
@@ -51,6 +63,8 @@ public class ReservationService {
 
         BigDecimal totalAmount = calculateTotalAmount(reservation.getLocation(), reservation.getStartDate(), reservation.getEndDate());
 
+        reservation.setStartDate(reservation.getStartDate());
+        reservation.setEndDate(reservation.getEndDate());
         reservation.setTotalAmount(totalAmount);
 
         int updateCount = reservationRepository.updateReservation(reservation);
@@ -65,6 +79,7 @@ public class ReservationService {
         return result;
     }
 
+    // make sure it was deleted successfully by repo method if 1 id is given
     public Result<Void> deleteReservation(int reservationId) {
         Result<Void> result = new Result<>();
 
@@ -78,14 +93,14 @@ public class ReservationService {
         return result;
     }
 
-    private BigDecimal calculateTotalAmount(Location hostLocation, LocalDate startDate, LocalDate endDate) {
+    public BigDecimal calculateTotalAmount(Location hostLocation, LocalDate startDate, LocalDate endDate) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         BigDecimal standardRate = hostLocation.getStandardRate();
         BigDecimal weekendRate = hostLocation.getWeekendRate();
 
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             DayOfWeek dayOfWeek = date.getDayOfWeek();
-            if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+            if (dayOfWeek == DayOfWeek.FRIDAY || dayOfWeek == DayOfWeek.SATURDAY) {
                 totalAmount = totalAmount.add(weekendRate);
             } else {
                 totalAmount = totalAmount.add(standardRate);
@@ -111,11 +126,12 @@ public class ReservationService {
             result.addMessage("Total amount must be specified and cannot be negative.");
         }
 
+        // follow guest logic
         if (reservation.getLocation() == null) {
             result.addMessage("Host location is required.");
         } else {
-            Location location = reservation.getLocation();
-            if (location == null) {
+            Location location1= locationRepository.findById(reservation.getLocation().getLocationId());
+            if (location1 == null) {
                 result.addMessage("Host location must exist in the database.");
             }
         }
@@ -131,33 +147,12 @@ public class ReservationService {
                 result.addMessage("Start date must be in the future.");
             }
 
-            List<Reservation> existingReservations = reservationRepository.findAllByLocationId(reservation.getLocation().getLocationId());
-            for (Reservation existingReservation : existingReservations) {
-                if (reservation.getStartDate().isBefore(existingReservation.getEndDate()) &&
-                        reservation.getEndDate().isAfter(existingReservation.getStartDate())) {
-                    result.addMessage("The reservation dates overlap with an existing reservation.");
-                    break;
-                }
-            }
         }
 
         result.setSuccess(result.getMessages().isEmpty());
         return result;
     }
 
-    private Result<Reservation> validateCancellation(Reservation reservation){
-        Result<Reservation> result = new Result<>();
-
-        if(reservation == null){
-            result.addMessage("reservation is empty");
-        }
-
-        if(reservation.getStartDate() != null && reservation.getStartDate().isBefore(LocalDate.now())){
-            result.addMessage("This Reservation has passed, please enter a reservation in the future");
-        }
-
-        return result;
-    }
 
 }
 

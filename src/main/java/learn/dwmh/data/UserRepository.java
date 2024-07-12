@@ -41,27 +41,6 @@ public class UserRepository {
     }
 
 
-    public List<User> findAllHosts() {
-        String sql = """
-       select
-       u.user_id,
-       u.first_name,
-       u.last_name,
-       u.email,
-       u.phone,
-       l.location_id,
-       l.address,
-       l.city,
-       l.postal_code,
-       l.state_id,
-       l.standard_rate,
-       l.weekend_rate
-       from `user` u
-       join location l on u.user_id = l.user_id
-       """;
-
-        return jdbcTemplate.query(sql, new UserMapper());
-    }
 
     // read by email
     public User findByEmail(String email) {

@@ -22,15 +22,5 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public List<User> findAll(){
-        return userRepository.findAllHosts();
-    }
 
-    public List<Reservation> findReservationsByHost(int userId){
-        User host = userRepository.findById(userId);
-        if (host == null || host.getLocation() == null){
-            return List.of();
-        }
-        return reservationRepository.findAllByLocationId(host.getLocation().getLocationId());
-    }
 }

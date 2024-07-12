@@ -25,6 +25,8 @@ public class Reservation {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+
     public Location getLocation(){return location;}
     public void setLocation(Location location) {
         this.location = location;

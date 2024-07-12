@@ -34,32 +34,10 @@ class ReservationRepositoryTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void findByUserId() {
-    }
 
-    @Test
-    void findByLocationId() {
-        List<Location> locations = new ArrayList<>();
-        Reservation expected = makeReservation(1);
-        Reservation actual = repository.findAllByLocationId();
-
-    }
-
-    @Test
-    void findAllByLocationId() {
-    }
-
-    @Test
-    void findAvailableDates() {
-    }
 
     @Test
     void createReservation() {
-    }
-
-    @Test
-    void findByHostEmail() {
     }
 
     @Test
