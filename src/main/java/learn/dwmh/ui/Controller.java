@@ -68,7 +68,7 @@ public class Controller {
 
     public void viewHost(String email){
         User user = userService.findByEmail(email);
-        if(email != null && user.getLocation() != null){
+        if(email != null && user.getLocation().getLocationId() != 0){
             view.displayHostUser(user);
         } else{
             System.out.println("Host not found.");
@@ -77,6 +77,10 @@ public class Controller {
 
     public void viewReservationsOfHost(String email){
         User user = userService.findByEmail(email);
+        if(user.getLocation() == null){
+            System.out.println("Invalid email.");
+            return;
+        }
         int locationId = user.getLocation().getLocationId();
         List<Reservation> reservationList = reservationService.findAvailability(locationId);
         if(reservationList.isEmpty()){
@@ -87,6 +91,7 @@ public class Controller {
     }
 
     public void makeNewReservation(){
+        Scanner scanner = new Scanner(System.in);
         String userEmail = view.getGuestEmail();
         User guest = userService.findByEmail(userEmail);
         String hostEmail = view.getHostEmail();
@@ -99,31 +104,48 @@ public class Controller {
         if( futureReservs== null){
             System.out.println("No reservations at the moment.");
         } else {
-            System.out.println(futureReservs);
+            viewReservationsOfHost(hostEmail);
         }
 
 
         LocalDate startDate = view.getStartDate();
         LocalDate endDate = view.getEndDate();
 
-        view.displayMessage("Please enter reservation id:");
-        int resId = view.reservationIdToEdit();
+//        if(resId == reservationService.findByReservationId(resId).getReservationId())
 
-        reservation.setReservationId(resId);
         reservation.setGuestUserId(guest);
         reservation.setStartDate(startDate);
         reservation.setEndDate(endDate);
         reservation.setLocation(host.getLocation());
         reservation.setTotalAmount(reservationService.calculateTotalAmount(reservation.getLocation(),
                 reservation.getStartDate(), reservation.getEndDate()));
-        reservationService.add(reservation);
+        System.out.println("Are you sure  you want to create reservation below? (y or n)" );
+        System.out.printf(" Reservation Details:%n Reservation Id: %s%n Location: %s%n Start Date: %s%n End Date: %s%n Total: %s%n",
+                reservation.getReservationId(),reservation.getLocation(),reservation.getStartDate(),
+                reservation.getEndDate(), reservation.getTotalAmount());
+        String answer = scanner.nextLine();
+        if(answer.equals("y")) {
+            Result<Reservation> result = reservationService.add(reservation);
+            if(result.isSuccess()) {
+                view.displayMessage("Reservation added.");
+            } else{
+                result.getMessages();
+            }
+        } else{
+            view.displayMessage("We won't add this reservation.");
+        }
 
 
 
     }
     public void editReservation(){
-        view.displayMessage("Please enter reservation id:");
-        int resId = view.reservationIdToEdit();
+        Scanner scanner = new Scanner(System.in);
+        String userEmail = view.getGuestEmail();
+        String hostEmail = view.getHostEmail();
+        viewHost(hostEmail);
+        viewReservationsOfHost(hostEmail);
+        view.displayMessage("Please enter reservation id to edit:");
+        int resId = Integer.parseInt(scanner.nextLine());
 
         Reservation reservation = reservationService.findByReservationId(resId);
 
@@ -133,7 +155,24 @@ public class Controller {
         reservation.setEndDate(endDate);
         reservation.setTotalAmount(reservationService.calculateTotalAmount(reservation.getLocation(),
                 reservation.getStartDate(), reservation.getEndDate()));
-        reservationService.updateReservation(reservation);
+
+        System.out.println("Are you sure  you want to update reservation below? (y or n)" );
+        System.out.printf(" Reservation Details:%n Reservation Id: %s%n Location: %s%n Start Date: %s%n End Date: %s%n Total: %s%n",
+                reservation.getReservationId(),reservation.getLocation().getAddress(),reservation.getStartDate(),
+                reservation.getEndDate(), reservation.getTotalAmount());
+        String answer = scanner.nextLine();
+        if(answer.equals("y")) {
+            Result<Reservation> result = reservationService.updateReservation(reservation);
+            if( result.isSuccess()) {
+                view.displayMessage("Updated successfully.");
+            } else{
+                System.out.println(result.getMessages());
+            }
+        } else{
+            System.out.println("We won't update this reservation.");
+        }
+
+
     }
 
 

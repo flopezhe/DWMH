@@ -86,7 +86,9 @@ public class View {
     public void displayReservationDetails(List<Reservation> reservations) {
         //displays details at the end, I believe I can use this for any output
         for (Reservation reservation : reservations) {
-            System.out.printf(" Reservation Details:%n Reservation Id: %s%n Start Date: %s%n End Date: %s%n Total: %s%n", reservation.getReservationId(),reservation.getStartDate(), reservation.getEndDate(), reservation.getTotalAmount());
+            System.out.printf(" Reservation Details:%n Reservation Id: %s%n Start Date: %s%n End Date: %s%n Total: %s%n",
+                    reservation.getReservationId(),reservation.getStartDate(),
+                    reservation.getEndDate(), reservation.getTotalAmount());
 
         }
     }

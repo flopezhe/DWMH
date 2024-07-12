@@ -98,6 +98,7 @@ public class ReservationService {
         return result;
     }
 
+
     public BigDecimal calculateTotalAmount(Location hostLocation, LocalDate startDate, LocalDate endDate) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         BigDecimal standardRate = hostLocation.getStandardRate();
@@ -115,6 +116,21 @@ public class ReservationService {
         return totalAmount;
     }
 
+//    private Result<Reservation> validateOverlap(LocalDate date, Reservation reservation){
+//       Result<Reservation> result = new Result<>();
+//
+//        List<Reservation> reservations = reservationRepository.findAvailability(reservation.getLocation().getLocationId());
+//        for(Reservation r : reservations){
+//            LocalDate existingStart = r.getStartDate();
+//            LocalDate existingLast = r.getEndDate();
+//
+//            if(reservation.getStartDate().isBefore(existingLast) && reservation.getEndDate().isAfter(existingStart)){
+//                result.addMessage("Invalid Dates, current reservation exists during those dates.");
+//            }
+//        }
+//        return result;
+//    }
+
     private Result<Reservation> validateReservation(Reservation reservation) {
         Result<Reservation> result = new Result<>();
 
@@ -127,9 +143,6 @@ public class ReservationService {
             }
         }
 
-        if (reservation.getTotalAmount() == null || reservation.getTotalAmount().compareTo(BigDecimal.ZERO) < 0) {
-            result.addMessage("Total amount must be specified and cannot be negative.");
-        }
 
         // follow guest logic
         if (reservation.getLocation() == null) {
@@ -138,6 +151,16 @@ public class ReservationService {
             Location location1= locationRepository.findById(reservation.getLocation().getLocationId());
             if (location1 == null) {
                 result.addMessage("Host location must exist in the database.");
+            }
+        }
+
+        List<Reservation> reservations = reservationRepository.findAvailability(reservation.getLocation().getLocationId());
+        for(Reservation r : reservations){
+            LocalDate existingStart = r.getStartDate();
+            LocalDate existingLast = r.getEndDate();
+
+            if(reservation.getStartDate().isBefore(existingLast) && reservation.getEndDate().isAfter(existingStart)){
+                result.addMessage("Invalid Dates, current reservation exists during those dates.");
             }
         }
 
@@ -152,7 +175,13 @@ public class ReservationService {
                 result.addMessage("Start date must be in the future.");
             }
 
+            if (reservation.getTotalAmount() == null || reservation.getTotalAmount().compareTo(BigDecimal.ZERO) < 0) {
+                result.addMessage("Total amount must be specified and cannot be negative.");
+            }
+
         }
+
+
 
         result.setSuccess(result.getMessages().isEmpty());
         return result;
