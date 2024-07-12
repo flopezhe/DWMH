@@ -140,16 +140,16 @@ Plan Outline
 38. [x] - Create Location Class **1 HR**
 39. [ ] ## UI
 40. [ ] - Create View **3 HR**
-41. [ ]   - Implement display methods
+41. [x]   - Implement display methods
 42. [ ]   - Gather data to take to controller
 43. [ ] - Create Controller **3 HR**
 44. [ ]   - Make sure they pass before sending to domain to update data
-45. [ ]   - addReservation
+45. [x]   - addReservation
 46. [ ]   - cancelReservation
 47. [ ]   - UpdateReservation
-48. [ ]   - viewReservation
+48. [x]   - viewReservation
 49. [ ] - JUNIT Testing
 50. [ ]   - testing to make sure view and controller actually do something
 51. [ ]   - same methods as above tests
 52. [ ] ## App
-53. [ ] - Implement controller
+53. [x] - Implement controller

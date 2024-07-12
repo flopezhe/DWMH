@@ -56,16 +56,17 @@ public class ReservationService {
     }
 
     public Result<Reservation> updateReservation(Reservation reservation) {
-        Result<Reservation> result = validateReservation(reservation);
-        if(!result.isSuccess()){
-            return result;
-        }
 
         BigDecimal totalAmount = calculateTotalAmount(reservation.getLocation(), reservation.getStartDate(), reservation.getEndDate());
 
         reservation.setStartDate(reservation.getStartDate());
         reservation.setEndDate(reservation.getEndDate());
         reservation.setTotalAmount(totalAmount);
+
+        Result<Reservation> result = validateReservation(reservation);
+        if(!result.isSuccess()){
+            return result;
+        }
 
         int updateCount = reservationRepository.updateReservation(reservation);
         if(updateCount == 1){

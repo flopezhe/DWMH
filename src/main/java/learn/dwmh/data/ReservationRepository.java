@@ -41,9 +41,9 @@ public class ReservationRepository {
                     u.email,
                     u.phone
                     from reservation r
-                    join location l on r.location_id = l.location_id
-                    join `user` u on r.guest_user_id = u.user_id
-                    join state s on l.state_id = s.state_id
+                    inner join location l on r.location_id = l.location_id
+                    inner join `user` u on r.guest_user_id = u.user_id
+                    inner join state s on l.state_id = s.state_id
                     where r.reservation_id = ?
                     """;
         return jdbcTemplate.query(sql, new ReservationMapper(), reservationId)
@@ -73,9 +73,9 @@ public class ReservationRepository {
                     u.email,
                     u.phone
                     from reservation r
-                    join location l on r.location_id = l.location_id
-                    join `user` u on r.guest_user_id = u.user_id
-                    join state s on l.state_id = s.state_id
+                    inner join location l on r.location_id = l.location_id
+                    inner join `user` u on r.guest_user_id = u.user_id
+                    inner join state s on l.state_id = s.state_id
                     where l.location_id = ?
                     """;
         return jdbcTemplate.query(sql, new ReservationMapper(), locationId);

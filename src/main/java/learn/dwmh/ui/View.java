@@ -84,7 +84,7 @@ public class View {
     public void displayReservationDetails(List<Reservation> reservations) {
         //displays details at the end, I believe I can use this for any output
         for (Reservation reservation : reservations) {
-            System.out.printf(" Reservation Details: Location: %s%n Start Date: %s%n End Date: %s%n Total: %s", reservation.getLocation(), reservation.getStartDate(), reservation.getEndDate(), reservation.getTotalAmount());
+            System.out.printf(" Reservation Details:%n Start Date: %s%n End Date: %s%n Total: %s%n", reservation.getStartDate(), reservation.getEndDate(), reservation.getTotalAmount());
 
         }
     }
@@ -92,11 +92,11 @@ public class View {
     public void displayAvailableDates(List<LocalDate> availableDates) {
         // display dates host is available for
     }
-
-    public void displaySummary(BigDecimal totalAmount) {
-        // displays amount guest will be paying or due
-        System.out.printf("Total Amount: $%.2f%n", totalAmount);
-    }
+// I believe displayReservationDetails will suffice for now comment out
+//    public void displaySummary(BigDecimal totalAmount) {
+//        // displays amount guest will be paying or due
+//        System.out.printf("Total Amount: $%.2f%n", totalAmount);
+//    }
 
     public void displayMessage(String message) {
         // generic message
