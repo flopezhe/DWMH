@@ -116,13 +116,14 @@ public class ReservationService {
 
         if (reservation.getGuestUserId() == null) {
             result.addMessage("Guest is required.");
-        } else {
-            User guest = userRepository.findById(reservation.getGuestUserId().getUserId());
-            if (guest == null) {
-                result.addMessage("Guest must exist in the database.");
-            }
-
         }
+//        } else {
+//            User guest = userRepository.findById(reservation.getGuestUserId().getUserId());
+//            if (guest == null) {
+//                result.addMessage("Guest must exist in the database.");
+//            }
+//
+//        }
 
 
         // follow guest logic
