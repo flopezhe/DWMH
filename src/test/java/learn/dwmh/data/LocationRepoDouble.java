@@ -13,7 +13,7 @@ public class LocationRepoDouble implements ILocation{
 
 
     public LocationRepoDouble(){
-        Location location1 = new Location(1,1, "address1","city1","zip1", "CA",
+        Location location1 = new Location(1,1, "address1","city1","zip1", 1,
                 new BigDecimal("10.50"), new BigDecimal("10.50"));
 
         locations.add(location1);

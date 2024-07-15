@@ -19,7 +19,7 @@ public class TestHelper {
     }
 
     public static Location makeLocation(int locationId) {
-        return new Location(locationId,1, "address1","city1","zip1", "CA",
+        return new Location(locationId,1, "address1","city1","zip1", 1,
                 new BigDecimal("10.50"), new BigDecimal("10.50"));
     }
 
@@ -30,7 +30,7 @@ public class TestHelper {
     }
 
     public static Location makeUserLocation(int locationId){
-        return new Location(locationId, 1,"address1","city1","zip1", "CA",
+        return new Location(locationId, 1,"address1","city1","zip1", 1,
                 new BigDecimal("10.50"), new BigDecimal("10.50"));
     }
 

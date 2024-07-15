@@ -37,7 +37,7 @@ class ReservationServiceTest {
 
     @Test
     void add() {
-        Location location = new Location(1, 2,"address1", "city1", "zip1", "CA", new BigDecimal("10.50"), new BigDecimal("10.50"));
+        Location location = new Location(1, 2,"address1", "city1", "zip1", 1, new BigDecimal("10.50"), new BigDecimal("10.50"));
         Reservation reservation = new Reservation();
         reservation.setGuestUserId(new User(2, "Jane", "Doe", "guest@example.com", "0987654321", null));
         reservation.setLocation(location);

@@ -130,17 +130,17 @@ public class ReservationService {
         if (reservation.getLocation() == null) {
             result.addMessage("Host location is required.");
         } else {
-            Location location1= locationRepository.findById(reservation.getLocation().getLocationId());
+            Location location1 = locationRepository.findById(reservation.getLocation().getLocationId());
             if (location1 == null) {
                 result.addMessage("Host location must exist in the database.");
             }
         }
 
         List<Reservation> reservations = reservationRepository.findAvailability(reservation.getLocation().getLocationId());
-        for(Reservation r : reservations){
+        for (Reservation r : reservations) {
             LocalDate existingStart = r.getStartDate();
             LocalDate existingLast = r.getEndDate();
-            if(!r.getGuestUserId().getEmail().equals(reservation.getGuestUserId().getEmail())){
+//            if (!r.getGuestUserId().getEmail().equals(reservation.getGuestUserId().getEmail())) {
                 if ((reservation.getStartDate().isBefore(existingLast) && reservation.getEndDate().isAfter(existingStart))) {
                     result.addMessage("Invalid Dates, current reservation exists during those dates.");
                 }
@@ -148,32 +148,31 @@ public class ReservationService {
                 if (reservation.getStartDate().isEqual(existingLast) || reservation.getEndDate().isEqual(existingStart)) {
                     result.addMessage("Invalid D, current reservation exists during those dates.");
                 }
-            }
+            //}
         }
 
+            if (reservation.getStartDate() == null || reservation.getEndDate() == null) {
+                result.addMessage("Start date and end date are required.");
+            } else {
 
-        if (reservation.getStartDate() == null || reservation.getEndDate() == null) {
-            result.addMessage("Start date and end date are required.");
-        } else {
 
+                if (!reservation.getStartDate().isBefore(reservation.getEndDate())) {
+                    result.addMessage("Start date must come before end date.");
+                }
 
-            if (!reservation.getStartDate().isBefore(reservation.getEndDate())) {
-                result.addMessage("Start date must come before end date.");
+                if (!reservation.getStartDate().isAfter(LocalDate.now())) {
+                    result.addMessage("Start date must be in the future.");
+                }
+
+                if (reservation.getTotalAmount() == null || reservation.getTotalAmount().compareTo(BigDecimal.ZERO) < 0) {
+                    result.addMessage("Total amount must be specified and cannot be negative.");
+                }
+
             }
-
-            if (!reservation.getStartDate().isAfter(LocalDate.now())) {
-                result.addMessage("Start date must be in the future.");
-            }
-
-            if (reservation.getTotalAmount() == null || reservation.getTotalAmount().compareTo(BigDecimal.ZERO) < 0) {
-                result.addMessage("Total amount must be specified and cannot be negative.");
-            }
-
+            result.setSuccess(result.getMessages().isEmpty());
+            return result;
         }
 
-        result.setSuccess(result.getMessages().isEmpty());
-        return result;
-    }
 
 
 }

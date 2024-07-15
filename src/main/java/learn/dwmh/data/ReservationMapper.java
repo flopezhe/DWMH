@@ -23,7 +23,7 @@ public class ReservationMapper implements RowMapper<Reservation> {
         location.setAddress(rs.getString("address"));
         location.setCity(rs.getString("city"));
         location.setZipCode(rs.getString("postal_code"));
-        location.setState(rs.getString("usps_code"));
+        location.setState(rs.getInt("state_id"));
         location.setStandardRate(rs.getBigDecimal("standard_rate"));
         location.setWeekendRate(rs.getBigDecimal("weekend_rate"));
         reservation.setLocation(location);

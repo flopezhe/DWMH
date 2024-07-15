@@ -18,7 +18,7 @@ public class UserRepoDouble implements IUser{
 
     public UserRepoDouble() {
 
-        Location location1 = new Location(1,1, "address1","city1","zip1", "CA",
+        Location location1 = new Location(1,1, "address1","city1","zip1", 1,
                 new BigDecimal("10.50"), new BigDecimal("10.50"));
         User host = new User(1, "Jane", "Smith", "guest@gmail.com", "0987654321", location1);
         User guest = new User(2, "John", "Doe", "host@gmail.com", "1234567890", null);
