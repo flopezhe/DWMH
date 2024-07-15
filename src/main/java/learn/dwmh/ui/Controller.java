@@ -94,10 +94,9 @@ public class Controller {
         User host = userService.findByEmail(hostEmail);
         viewHost(hostEmail);
 
-        if (guest.getEmail().equals(host.getEmail())){
+        if (host.getEmail().equals(userEmail)){
             System.out.printf("%n%n Host is not allowed to reserve their own location. %n%n");
         } else {
-
             Reservation reservation = new Reservation();
 
             List<Reservation> futureReservs = reservationService.findAvailability(host.getLocation().getLocationId());
@@ -137,6 +136,7 @@ public class Controller {
         }
 
     }
+
     public void editReservation(){
         Scanner scanner = new Scanner(System.in);
         String userEmail = view.getGuestEmail();
@@ -154,23 +154,25 @@ public class Controller {
         reservation.setEndDate(endDate);
         reservation.setTotalAmount(reservationService.calculateTotalAmount(reservation.getLocation(),
                 reservation.getStartDate(), reservation.getEndDate()));
-
-        System.out.println("Are you sure  you want to update reservation below? (y or n)" );
-        System.out.printf(" Reservation Details:%n Reservation ID: %s%n Location: %s%n Start Date: %s%n End Date: %s%n Total: %s%n",
-                reservation.getReservationId(),reservation.getLocation().getAddress(),reservation.getStartDate(),
-                reservation.getEndDate(), reservation.getTotalAmount());
-        String answer = scanner.nextLine();
-        if(answer.equals("y")) {
-            Result<Reservation> result = reservationService.updateReservation(reservation);
-            if( result.isSuccess()) {
-                System.out.println("Reservation was updated!");
-            } else{
-                System.out.println(result.getMessages());
+        if(userEmail.equals(reservation.getGuestUserId().getEmail())) {
+            System.out.println("Are you sure  you want to update reservation below? (y or n)");
+            System.out.printf(" Reservation Details:%n Reservation ID: %s%n Location: %s%n Start Date: %s%n End Date: %s%n Total: %s%n",
+                    reservation.getReservationId(), reservation.getLocation().getAddress(), reservation.getStartDate(),
+                    reservation.getEndDate(), reservation.getTotalAmount());
+            String answer = scanner.nextLine();
+            if (answer.equals("y")) {
+                Result<Reservation> result = reservationService.updateReservation(reservation);
+                if (result.isSuccess()) {
+                    System.out.println("Reservation was updated!");
+                } else {
+                    System.out.println(result.getMessages());
+                }
+            } else {
+                System.out.println("We won't update this reservation.");
             }
-        } else{
-            System.out.println("We won't update this reservation.");
+        } else {
+            view.displayMessage("Cant update other guests reservation");
         }
-
 
     }
 
