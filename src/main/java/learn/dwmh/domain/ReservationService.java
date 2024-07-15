@@ -98,7 +98,7 @@ public class ReservationService {
         BigDecimal standardRate = hostLocation.getStandardRate();
         BigDecimal weekendRate = hostLocation.getWeekendRate();
 
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+        for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {
             DayOfWeek dayOfWeek = date.getDayOfWeek();
             if (dayOfWeek == DayOfWeek.FRIDAY || dayOfWeek == DayOfWeek.SATURDAY) {
                 totalAmount = totalAmount.add(weekendRate);

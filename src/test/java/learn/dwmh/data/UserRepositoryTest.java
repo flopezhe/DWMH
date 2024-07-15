@@ -2,6 +2,7 @@ package learn.dwmh.data;
 
 import learn.dwmh.DataHelper;
 import learn.dwmh.models.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -11,6 +12,11 @@ class UserRepositoryTest {
 
     JdbcTemplate jdbcTemplate = DataHelper.getJdbcTemplate();
     UserRepository repository = new UserRepository(jdbcTemplate);
+
+    @BeforeEach
+    void setup() {
+        jdbcTemplate.execute("call set_known_good_state();");
+    }
 
     @Test
     void findByEmail() {
