@@ -1,26 +1,18 @@
 package learn.dwmh.ui;
 
 
-import learn.dwmh.domain.ReservationService;
 
-import learn.dwmh.domain.UserService;
-import learn.dwmh.models.Location;
 import learn.dwmh.models.Reservation;
 import learn.dwmh.models.User;
 
-import java.io.FilterOutputStream;
-import java.math.BigDecimal;
-import java.time.DayOfWeek;
+
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
 public class View {
 
     private final ConsoleIO io;
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    private static final Scanner scanner = new Scanner(System.in);
 
     public View(ConsoleIO io) {
         this.io = io;
@@ -68,42 +60,16 @@ public class View {
         return io.readLocalDate("End Date MM/dd/yyyy: ");
     }
 
-    public Reservation createReservation(User user, Location location) {
-       return new Reservation();
-    }
-
-
-    public int reservationIdToEdit() {
-        Scanner scanner = new Scanner(System.in);
-        return io.readInt(scanner.nextLine());
-
-    }
-
-    public void cancel() {
-        // cancel only future reservation displayMessage
-    }
-
     public void displayReservationDetails(List<Reservation> reservations) {
-        //displays details at the end, I believe I can use this for any output
         for (Reservation reservation : reservations) {
-            System.out.printf(" Reservation Details:%n Reservation Id: %s%n Start Date: %s%n End Date: %s%n Total: %s%n",
-                    reservation.getReservationId(),reservation.getStartDate(),
+            System.out.printf(" Reservation Details:%n Reservation Id: %s%n User Name: %s%n Start Date: %s%n End Date: %s%n Total: %s%n",
+                    reservation.getReservationId(),reservation.getGuestUserId().getFirstName(),reservation.getStartDate(),
                     reservation.getEndDate(), reservation.getTotalAmount());
 
         }
     }
 
-    public void displayAvailableDates(List<LocalDate> availableDates) {
-        // display dates host is available for
-    }
-// I believe displayReservationDetails will suffice for now comment out
-//    public void displaySummary(BigDecimal totalAmount) {
-//        // displays amount guest will be paying or due
-//        System.out.printf("Total Amount: $%.2f%n", totalAmount);
-//    }
-
     public void displayMessage(String message) {
-        // generic message
         System.out.println(message);
     }
 

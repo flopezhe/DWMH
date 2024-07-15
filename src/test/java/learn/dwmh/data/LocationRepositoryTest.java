@@ -5,7 +5,7 @@ import learn.dwmh.models.Location;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.math.BigDecimal;
+
 
 import static learn.dwmh.TestHelper.makeLocation;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +16,6 @@ class LocationRepositoryTest {
 
     @Test
     void findById() {
-
 
         Location expected = makeLocation(1);
         Location actual = repository.findById(1);

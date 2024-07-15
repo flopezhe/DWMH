@@ -9,9 +9,7 @@ import learn.dwmh.ui.ConsoleIO;
 import learn.dwmh.ui.Controller;
 import learn.dwmh.ui.View;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import java.util.Scanner;
 
 public class App {
 

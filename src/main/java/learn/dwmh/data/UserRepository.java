@@ -2,13 +2,9 @@ package learn.dwmh.data;
 
 import learn.dwmh.models.User;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
-public class UserRepository {
+public class UserRepository implements IUser {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -57,9 +53,13 @@ public class UserRepository {
            l.postal_code,
            l.state_id,
            l.standard_rate,
-           l.weekend_rate
+           l.weekend_rate,
+           s.state_id,
+           s.`name`,
+           s.usps_code
            from `user` u
            left join location l on u.user_id = l.user_id
+           inner join state s on l.state_id = s.state_id
            where u.email = ?
            """;
 

@@ -1,8 +1,6 @@
 package learn.dwmh.domain;
 
-import learn.dwmh.data.LocationRepository;
-import learn.dwmh.data.ReservationRepository;
-import learn.dwmh.data.UserRepository;
+import learn.dwmh.data.*;
 import learn.dwmh.models.Location;
 import learn.dwmh.models.Reservation;
 import learn.dwmh.models.User;
@@ -15,13 +13,13 @@ import java.util.List;
 
 public class ReservationService {
 
-    private final ReservationRepository reservationRepository;
+    private final IReservation reservationRepository;
 
-    private final UserRepository userRepository;
+    private final IUser userRepository;
 
-    private final LocationRepository locationRepository;
+    private final ILocation locationRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository1, LocationRepository locationRepository) {
+    public ReservationService(IReservation reservationRepository, IUser userRepository1, ILocation locationRepository) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository1;
         this.locationRepository = locationRepository;
@@ -35,13 +33,7 @@ public class ReservationService {
         return reservationRepository.findAvailability(locationId);
     }
 
-    public Location findByLocation(String email){
-        return reservationRepository.findByLocationId(email);
-    }
 
-    public List<Reservation> findReservationsByLocation(int locationId){
-        return reservationRepository.findReservationsByLocation(locationId);
-    }
 
 
     public Result<Reservation> add(Reservation reservation) {
@@ -84,7 +76,7 @@ public class ReservationService {
         return result;
     }
 
-    // make sure it was deleted successfully by repo method if 1 id is given
+
     public Result<Void> deleteReservation(int reservationId) {
         Result<Void> result = new Result<>();
 
@@ -97,6 +89,8 @@ public class ReservationService {
         }
         return result;
     }
+
+
 
 
     public BigDecimal calculateTotalAmount(Location hostLocation, LocalDate startDate, LocalDate endDate) {
@@ -116,20 +110,6 @@ public class ReservationService {
         return totalAmount;
     }
 
-//    private Result<Reservation> validateOverlap(LocalDate date, Reservation reservation){
-//       Result<Reservation> result = new Result<>();
-//
-//        List<Reservation> reservations = reservationRepository.findAvailability(reservation.getLocation().getLocationId());
-//        for(Reservation r : reservations){
-//            LocalDate existingStart = r.getStartDate();
-//            LocalDate existingLast = r.getEndDate();
-//
-//            if(reservation.getStartDate().isBefore(existingLast) && reservation.getEndDate().isAfter(existingStart)){
-//                result.addMessage("Invalid Dates, current reservation exists during those dates.");
-//            }
-//        }
-//        return result;
-//    }
 
     private Result<Reservation> validateReservation(Reservation reservation) {
         Result<Reservation> result = new Result<>();
@@ -141,6 +121,7 @@ public class ReservationService {
             if (guest == null) {
                 result.addMessage("Guest must exist in the database.");
             }
+
         }
 
 
@@ -158,15 +139,23 @@ public class ReservationService {
         for(Reservation r : reservations){
             LocalDate existingStart = r.getStartDate();
             LocalDate existingLast = r.getEndDate();
+            if(!r.getGuestUserId().getEmail().equals(reservation.getGuestUserId().getEmail())){
+                if ((reservation.getStartDate().isBefore(existingLast) && reservation.getEndDate().isAfter(existingStart))) {
+                    result.addMessage("Invalid Dates, current reservation exists during those dates.");
+                }
 
-            if(reservation.getStartDate().isBefore(existingLast) && reservation.getEndDate().isAfter(existingStart)){
-                result.addMessage("Invalid Dates, current reservation exists during those dates.");
+                if (reservation.getStartDate().isEqual(existingLast) || reservation.getEndDate().isEqual(existingStart)) {
+                    result.addMessage("Invalid D, current reservation exists during those dates.");
+                }
             }
         }
+
 
         if (reservation.getStartDate() == null || reservation.getEndDate() == null) {
             result.addMessage("Start date and end date are required.");
         } else {
+
+
             if (!reservation.getStartDate().isBefore(reservation.getEndDate())) {
                 result.addMessage("Start date must come before end date.");
             }
@@ -180,8 +169,6 @@ public class ReservationService {
             }
 
         }
-
-
 
         result.setSuccess(result.getMessages().isEmpty());
         return result;

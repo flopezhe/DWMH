@@ -1,19 +1,20 @@
 package learn.dwmh.domain;
 
+import learn.dwmh.data.IReservation;
+import learn.dwmh.data.IUser;
 import learn.dwmh.data.ReservationRepository;
 import learn.dwmh.data.UserRepository;
-import learn.dwmh.models.Reservation;
+
 import learn.dwmh.models.User;
 
-import java.util.List;
 
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final ReservationRepository reservationRepository;
+    private final IUser userRepository;
+    private final IReservation reservationRepository;
 
 
-    public UserService(UserRepository userRepository, ReservationRepository reservationRepository) {
+    public UserService(IUser userRepository, IReservation reservationRepository) {
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
     }

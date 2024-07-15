@@ -1,77 +1,172 @@
 package learn.dwmh.domain;
 
-import learn.dwmh.DataHelper;
-import learn.dwmh.data.LocationRepository;
-import learn.dwmh.data.ReservationRepository;
-import learn.dwmh.data.UserRepository;
+
+
+import learn.dwmh.data.*;
+import learn.dwmh.models.Location;
 import learn.dwmh.models.Reservation;
+import learn.dwmh.models.User;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
+
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
-import static learn.dwmh.TestHelper.makeReservation;
-import static learn.dwmh.TestHelper.makeResult;
+
+import static learn.dwmh.TestHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ReservationServiceTest {
 
-    JdbcTemplate jdbcTemplate = DataHelper.getJdbcTemplate();
-    ReservationRepository reservationRepository = new ReservationRepository(jdbcTemplate);
-    UserRepository userRepository = new UserRepository(jdbcTemplate);
-    LocationRepository locationRepository = new LocationRepository(jdbcTemplate);
-    ReservationService reservationService = new ReservationService(reservationRepository, userRepository, locationRepository);
-
+    ReservationRepoDouble reservationRepo;
+    UserRepoDouble userRepo;
+    LocationRepoDouble locationRepo;
+    ReservationService service ;
 
     @BeforeEach
-    void setup() {
-        jdbcTemplate.execute("call set_known_good_state();");
+    void setUp(){
+        reservationRepo = new ReservationRepoDouble();
+        userRepo = new UserRepoDouble();
+        locationRepo = new LocationRepoDouble();
+        service = new ReservationService(reservationRepo, userRepo, locationRepo);
     }
 
-//    @Test
-//    void findByLocation() {
-//        List<Reservation> expected = new ArrayList<>();
-//        Reservation reservation1 = makeReservation(1);
-////        Reservation reservation2 = makeReservation(2);
-//        expected.add(reservation1);
-////        expected.add(reservation2);
-//        List<Reservation> actual1 = reservationRepository.findAllByLocationId(1);
-//        assertEquals(expected,actual1);
-//
-//    }
 
     @Test
     void add() {
-        Reservation reservation = makeReservation(3);
+        Location location = new Location(1, 2,"address1", "city1", "zip1", "CA", new BigDecimal("10.50"), new BigDecimal("10.50"));
+        Reservation reservation = new Reservation();
+        reservation.setGuestUserId(new User(2, "Jane", "Doe", "guest@example.com", "0987654321", null));
+        reservation.setLocation(location);
+        reservation.setStartDate(LocalDate.of(2025, 8, 1));
+        reservation.setEndDate(LocalDate.of(2025, 8, 10));
+        reservation.setTotalAmount(new BigDecimal("105.00"));
 
-        reservationService.add(reservation);
+        Result<Reservation> result = service.add(reservation);
 
-        Reservation expected = reservationRepository.findById(3);
-
-        Reservation actual = reservationRepository.findById(3);
+        assertTrue(result.isSuccess());
 
 
-        assertEquals(expected,actual);
+
     }
 
     @Test
     void updateReservation() {
-        Reservation reservation = makeReservation(1);
-        reservation.setTotalAmount(new BigDecimal("100.00"));
-        reservationService.updateReservation(reservation);
 
-        BigDecimal expected = reservation.getTotalAmount();
-        BigDecimal actual = reservation.getTotalAmount();
+        User user = makeGuestUser(2);
+        Location location = makeLocation(1);
+        LocalDate startDate = LocalDate.of(2026,7,1);
+        LocalDate endDate = LocalDate.of(2026,8,1);
+        Reservation reservation = new Reservation(4, service.findByReservationId(1).getLocation(), user,startDate,endDate, service.calculateTotalAmount(location, startDate, endDate));
+        LocalDate newStart = LocalDate.of(2027, 7, 15);
+        LocalDate newEnd = LocalDate.of(2027,7,21);
 
-        System.out.println(expected);
-        System.out.println(actual);
-        assertEquals(expected,actual);
+        reservation.setLocation(location);
+        reservation.setStartDate(newStart);
+        reservation.setEndDate(newEnd);
+        Result<Reservation> result = service.updateReservation(reservation);
+
+        assertTrue(result.isSuccess());
+
+    }
+
+    @Test
+    void shouldNotUpdatePastDate(){
+
+        Reservation reservation = service.findByReservationId(1);
+
+        reservation.setStartDate(LocalDate.of(2024,6,20));
+        reservation.setEndDate(LocalDate.of(2024,7,1));
+
+        Result<Reservation> result = service.updateReservation(reservation);
+
+        assertFalse(result.isSuccess());
+    }
+
+
+    @Test
+    void cantCreatePastReservation(){
+        User user = makeUser(2);
+
+        LocalDate startDate = LocalDate.of(2024, 7, 1);
+        LocalDate endDate = LocalDate.of(2024, 7, 10);
+
+        Location location = makeLocation(1);
+
+        Reservation reservation = makeReservation(4,location, user, startDate,endDate,new BigDecimal("100"));
+
+        Result<Reservation> result = service.add(reservation);
+
+        assertFalse(result.isSuccess());
+    }
+    @Test
+    void cantCreateStartDateAfterEndDate (){
+
+        User user = makeUser(1);
+
+        LocalDate startDate = LocalDate.of(2026, 8, 20);
+        LocalDate endDate = LocalDate.of(2026, 8, 10);
+
+        Location location = makeLocation(1);
+
+        Reservation reservation = makeReservation(4, location , user,
+                startDate, endDate, new BigDecimal("100"));
+
+        Result<Reservation> result = service.add(reservation);
+
+        assertFalse(result.isSuccess());
+
+
+
+
     }
 
     @Test
     void deleteReservation() {
+        Reservation reservation =service.findByReservationId(1);
+
+        Result<Void> result = service.deleteReservation(reservation.getReservationId());
+
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    void findByReservationId() {
+
+        User user = makeUser(1);
+        Location location = makeLocation(1);
+        LocalDate start = LocalDate.of(2024,8,10);
+        LocalDate end = LocalDate.of(2024,8,15);
+        Reservation reservation = makeReservation(1, location, user, start, end, new BigDecimal("100"));
+        int expected = 1;
+        int actual = reservation.getReservationId();
+
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    void findAvailability() {
+
+        List<Reservation> reservationList = service.findAvailability(1);
+
+        assertEquals(3, reservationList.size());
+    }
+
+    @Test
+    void calculateTotalAmount() {
+
+        Location location = service.findByReservationId(1).getLocation();
+        LocalDate startDate = LocalDate.of(2024,7,15);
+        LocalDate endDate = LocalDate.of(2024, 7,16);
+
+        BigDecimal actual = service.calculateTotalAmount(location, startDate, endDate);
+
+        BigDecimal expected = new BigDecimal("21.00");
+
+        assertEquals(expected,actual);
     }
 }

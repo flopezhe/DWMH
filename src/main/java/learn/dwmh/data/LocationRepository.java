@@ -3,9 +3,9 @@ package learn.dwmh.data;
 import learn.dwmh.models.Location;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.List;
 
-public class LocationRepository {
+
+public class LocationRepository implements ILocation{
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -36,6 +36,5 @@ public class LocationRepository {
         return jdbcTemplate.query(sql, new LocationMapper(), locationId)
                 .stream().findFirst().orElse(null);
     }
-
 
 }

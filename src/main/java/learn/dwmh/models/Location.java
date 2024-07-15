@@ -11,9 +11,10 @@ public class Location {
     private BigDecimal standardRate;
     private BigDecimal weekendRate;
     private String address;
-    private int state;
+    private String state;
     private String city;
     private String zipCode;
+
 
     public int getUserId() {
         return userId;
@@ -27,7 +28,7 @@ public class Location {
 
     public Location(){}
 
-    public Location(int locationId, int userId, String address, String city, String zipCode,int stateId,BigDecimal standardRate, BigDecimal weekendRate) {
+    public Location(int locationId, int userId, String address, String city, String zipCode,String stateId,BigDecimal standardRate, BigDecimal weekendRate) {
         this.locationId = locationId;
         this.userId = userId;
         this.standardRate = standardRate;
@@ -70,11 +71,11 @@ public class Location {
         this.address = address;
     }
 
-    public int getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(int state) {
+    public void setState(String state) {
         this.state = state;
     }
 
