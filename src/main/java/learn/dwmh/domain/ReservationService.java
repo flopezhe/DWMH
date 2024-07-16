@@ -144,10 +144,10 @@ public class ReservationService {
                 if ((reservation.getStartDate().isBefore(existingLast) && reservation.getEndDate().isAfter(existingStart))) {
                     result.addMessage("Invalid Dates, current reservation exists during those dates.");
                 }
-
-                if (reservation.getStartDate().isEqual(existingLast) || reservation.getEndDate().isEqual(existingStart)) {
-                    result.addMessage("Invalid D, current reservation exists during those dates.");
-                }
+// not needed since people can book same day
+//                if (reservation.getStartDate().isEqual(existingLast) || reservation.getEndDate().isEqual(existingStart)) {
+//                    result.addMessage("Invalid D, current reservation exists during those dates.");
+//                }
             //}
         }
 

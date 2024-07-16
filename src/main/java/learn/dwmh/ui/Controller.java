@@ -63,19 +63,23 @@ public class Controller {
 
     public void viewHost(String email){
         User user = userService.findByEmail(email);
-        if(email != null && user.getLocation().getLocationId() != 0){
-            view.displayHostUser(user);
-        } else{
-            System.out.println("Host not found.");
+        if(user != null) {
+            if (email != null && user.getLocation().getLocationId() != 0) {
+                view.displayHostUser(user);
+            } else {
+                System.out.println("Host not found.");
+            }
+        } else {
+            view.displayMessage("Invalid host.");
         }
     }
 
     public void viewReservationsOfHost(String email){
         User user = userService.findByEmail(email);
-        if(user.getLocation() == null){
+        if(user == null){
             System.out.println("Invalid email.");
             return;
-        }
+        } else{
         int locationId = user.getLocation().getLocationId();
 
         List<Reservation> reservationList = reservationService.findAvailability(locationId);
@@ -83,6 +87,7 @@ public class Controller {
             System.out.println("No reservations found.");
         } else {
             view.displayReservationDetails(reservationList);
+        }
         }
     }
 
