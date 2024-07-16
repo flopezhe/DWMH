@@ -140,7 +140,7 @@ public class ReservationService {
         for (Reservation r : reservations) {
             LocalDate existingStart = r.getStartDate();
             LocalDate existingLast = r.getEndDate();
-//            if (!r.getGuestUserId().getEmail().equals(reservation.getGuestUserId().getEmail())) {
+            if (!r.getGuestUserId().getEmail().equals(reservation.getGuestUserId().getEmail())) {
                 if ((reservation.getStartDate().isBefore(existingLast) && reservation.getEndDate().isAfter(existingStart))) {
                     result.addMessage("Invalid Dates, current reservation exists during those dates.");
                 }
@@ -148,7 +148,7 @@ public class ReservationService {
 //                if (reservation.getStartDate().isEqual(existingLast) || reservation.getEndDate().isEqual(existingStart)) {
 //                    result.addMessage("Invalid D, current reservation exists during those dates.");
 //                }
-            //}
+            }
         }
 
             if (reservation.getStartDate() == null || reservation.getEndDate() == null) {

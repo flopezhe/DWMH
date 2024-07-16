@@ -100,7 +100,7 @@ public class Controller {
 
 
 
-        if( guest != null || host != null){
+        if( guest != null && host != null){
             viewHost(hostEmail);
         if (host.getEmail().equals(userEmail)){
             System.out.printf("%n%n Host is not allowed to reserve their own location. %n%n");
@@ -155,7 +155,7 @@ public class Controller {
         User guest = userService.findByEmail(userEmail);
         User host = userService.findByEmail(hostEmail);
 
-        if(guest != null || host != null) {
+        if(guest != null && host != null) {
             viewHost(hostEmail);
             viewReservationsOfHost(hostEmail);
 
@@ -201,7 +201,7 @@ public class Controller {
         String hostEmail = view.getHostEmail();
         User guest = userService.findByEmail(userEmail);
         User host = userService.findByEmail(hostEmail);
-        if(guest != null || host != null) {
+        if(guest != null && host != null) {
             viewHost(hostEmail);
             viewReservationsOfHost(hostEmail);
             view.displayMessage("Please enter reservation id to delete:");
